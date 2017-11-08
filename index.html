@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <canvas id="canvas" style="border: 3px solid red;" height="600" width="300"> </canvas>
+    <script>
+      //create a board DONE
+      //create a simple tetris block
+      //get the tetris block to move automatically
+
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+
+      document.addEventListener('DOMContentLoaded', () => {
+        var y = 0;
+        var x = 25;
+        sinkBlocks = (delay, y) => {
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x, y + 25);
+          ctx.lineTo(x + 25, y + 25);
+          ctx.lineTo(x + 25, y);
+          ctx.lineTo(x, y);
+          ctx.stroke()
+          setTimeout( () => {
+            ctx.clearRect(0, 0 , canvas.width, y)
+            sinkBlocks(delay, y + 3)
+          }, delay)
+        }
+
+        sinkBlocks(1000, 0)
+      })
+
+      document.addEventListener('keypress', (e) => {
+        switch(e.key) {
+          case "d" :
+          console.log("d pressed!")
+          ctx.
+          break
+          case "a" :
+          console.log("a pressed!")
+          break
+          default :
+          console.log('wrong key')
+        }
+      })
+    </script>
+
+    <style>
+
+    <style>
+  </head>
+  <body>
+
+  </body>
+</html>
