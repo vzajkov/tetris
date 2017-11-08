@@ -11,10 +11,10 @@
 
       const canvas = document.getElementById('canvas')
       const ctx = canvas.getContext('2d')
+      var y = 0;
+      var x = 25;
 
       document.addEventListener('DOMContentLoaded', () => {
-        var y = 0;
-        var x = 25;
         sinkBlocks = (delay, y) => {
           ctx.beginPath();
           ctx.moveTo(x, y);
@@ -22,24 +22,27 @@
           ctx.lineTo(x + 25, y + 25);
           ctx.lineTo(x + 25, y);
           ctx.lineTo(x, y);
-          ctx.stroke()
+          ctx.stroke();
           setTimeout( () => {
             ctx.clearRect(0, 0 , canvas.width, y)
             sinkBlocks(delay, y + 3)
           }, delay)
         }
 
-        sinkBlocks(1000, 0)
+        sinkBlocks(500, 0)
       })
 
       document.addEventListener('keypress', (e) => {
         switch(e.key) {
           case "d" :
           console.log("d pressed!")
-          ctx.
+          x =  x + 25;
+          ctx.clearRect(x - 26, y, 50, 50);
           break
           case "a" :
           console.log("a pressed!")
+          x = x - 25;
+          ctx.clearRect(x + 26, y, 50, 50);
           break
           default :
           console.log('wrong key')
