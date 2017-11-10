@@ -5,47 +5,68 @@
     <title></title>
     <canvas id="canvas" style="border: 3px solid red;" height="600" width="300"> </canvas>
     <script>
-      //create a board DONE
-      //create a simple tetris block
-      //get the tetris block to move automatically
+      //allow stacking of boxes
 
       const canvas = document.getElementById('canvas')
       const ctx = canvas.getContext('2d')
       var y = 0;
-      var x = 25;
+      var xShift = 0;
+      //in block positions, xPos key points to an array of yPos's
+      const blockPositions = {25: [], 50 : [], 75: [], 100: [], 125: [], 150: []};
+      var toggle = false;
+      // var bottom = canvas.height
+      sinkBlocks = (delay, x,  y) => {
+        if (blockPositions[x].length === 0) {
+          bottom = canvas.height
+        } else if (blockPositions[x].slice(-1)[0] < y) {
+          bottom = y
+        }
+        blockPositions[x].push(bottom)
 
-      document.addEventListener('DOMContentLoaded', () => {
-        sinkBlocks = (delay, y) => {
+          if (bottom < y + 25) {
+            bottom = y
+            sinkBlocks(20, 75, 0)
+          }
+         else {
+          //make the x position a randomly generated value
+          //make the y position start from the top initially
           ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.lineTo(x, y + 25);
-          ctx.lineTo(x + 25, y + 25);
-          ctx.lineTo(x + 25, y);
-          ctx.lineTo(x, y);
+          ctx.moveTo(25 + xShift, y);
+          ctx.lineTo(25 + xShift, y + 25);
+          ctx.lineTo(25 + 25 + xShift, y + 25);
+          ctx.lineTo(25 + 25 + xShift, y + 25);
+          ctx.lineTo(25 + xShift, y);
           ctx.stroke();
+
           setTimeout( () => {
             ctx.clearRect(0, 0 , canvas.width, y)
-            sinkBlocks(delay, y + 3)
+            sinkBlocks(delay, x, y + 5)
           }, delay)
-        }
 
-        sinkBlocks(500, 0)
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        sinkBlocks(20, 75, 0);
       })
+
+
 
       document.addEventListener('keypress', (e) => {
         switch(e.key) {
           case "d" :
-          console.log("d pressed!")
-          x =  x + 25;
-          ctx.clearRect(x - 26, y, 50, 50);
-          break
+            console.log(xShift)
+            console.log("d pressed!")
+            if (xShift < canvas.width - 25) {xShift =  xShift + 25;}
+            ctx.clearRect(xShift - 26, y, 50, 50);
+            break
           case "a" :
-          console.log("a pressed!")
-          x = x - 25;
-          ctx.clearRect(x + 26, y, 50, 50);
-          break
+            console.log("a pressed!")
+            if (xShift > 0) {xShift = xShift - 25;}
+            ctx.clearRect(xShift + 26, y, 50, 50);
+            break
           default :
-          console.log('wrong key')
+            console.log('wrong key')
         }
       })
     </script>
