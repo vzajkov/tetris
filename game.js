@@ -9,17 +9,43 @@
       var toggle = false;
       var rowHolder = [];
       var score = 0;
+      var oldScore = 0;
       var anchorCol = 0;
+      var delay = 400;
+      var startGame = false;
+      var pauseGame = false;
+      var oldDelay = delay;
+      var gameOver = false;
+      var baseCol = 0;
+      var baseRow = 0;
       const colors = ["#F7DC6F","#2471A3", "#2ECC71", "#EB984E", "#AF7AC5", "#D5DBDB", "#784212"];
       var currentColor = "#F7DC6F";
       //in block positions, xPos key points to an array of yPos's
-      const blockPositions = {0: [25], 1: [25],  2: [25], 3: [25], 4: [25], 5: [25], 6: [25], 7: [25], 8: [25], 9:[25], 10: [25], 11: [25]};
+      var blockPositions = {0: [25], 1: [25],  2: [25], 3: [25], 4: [25], 5: [25], 6: [25], 7: [25], 8: [25], 9:[25], 10: [25], 11: [25]};
+
 
       sinkBlocks = (delay, cols,  rows, color) => {
+        document.getElementById("score").innerHTML = score;
+
+        //starting and pausing game
+        if (startGame === true) {
+          document.getElementById("press-start").innerHTML = "";
+        }
+        if (pauseGame === true) {
+          document.getElementById("game-paused").innerHTML = "Game Paused"
+        } else {
+          document.getElementById("game-paused").innerHTML = ""
+        }
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillText(score, canvas.width/2, canvas.height/2);
         currentCols = cols;
         currentRows = rows;
+        Object.keys(blockPositions).forEach( (col) => {
+          if (blockPositions[col].includes(0)) {
+            gameOver = true;
+          }
+        });
+
         //checks if any of the blocks touch the stacked blocks
           cols.forEach( (col, idx) => {
             if (blockPositions[col + xShift].slice(-1)[0] === rows[idx] + 1) {
@@ -88,9 +114,8 @@
           toggle = false;
           xShift = 0;
 
-
           currentColor = colors[Math.floor(Math.random() * colors.length)];
-          return sinkBlocks(200, cols, rows, currentColor);
+          return sinkBlocks(delay, cols, rows, currentColor);
         }
 
         //all the stacked blocks
@@ -124,22 +149,57 @@
 
           score = score + 10;
           toggle = false;
+          if (score > oldScore + 500 &&  delay >= 100) {
+            oldScore = score;
+            delay = delay - 10;
+          }
+
+          if (gameOver === true) {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            document.getElementById("game-over").innerHTML = "Game Over! Press any key to play again."
+          }
+
+          if (pauseGame === false && gameOver === false) {
           setTimeout( () => {
             sinkBlocks(delay, currentCols, currentRows.map((row) => { return row + 1;}))
           }, delay);
-
+          }
 
 
       };
 
       document.addEventListener('DOMContentLoaded', () => {
-        sinkBlocks(200, cols, rows, currentColor);
+
       });
 
 
       //key movements
       document.addEventListener('keypress', (e) => {
+        if (gameOver === true) {
+          gameOver = false;
+          blockPositions = {0: [25], 1: [25],  2: [25], 3: [25], 4: [25], 5: [25], 6: [25], 7: [25], 8: [25], 9:[25], 10: [25], 11: [25]};
+          score = 0;
+          delay = 400;
+          cols = [3,4,5,6];
+          rows = [0, 0, 0, 0];
+          var currentColor = "#F7DC6F";
+          document.getElementById("game-over").innerHTML = "";
+          return sinkBlocks(delay, cols, rows, currentColor );
+        }
+        if (startGame === false) {
+          startGame = true;
+          return sinkBlocks(delay, cols, rows, currentColor);
+        }
         switch(e.key) {
+          case "p" :
+            if (pauseGame === false) {
+              console.log("hitting!!!")
+              pauseGame = true;
+            } else if (pauseGame === true) {
+              pauseGame = false;
+              return sinkBlocks(delay, currentCols, currentRows, currentColor)
+            }
+            break
           case "d" :
             if (currentCols.every((currentCol) => {
               return currentCol + xShift < 11;
@@ -160,6 +220,8 @@
             break;
           case "r" :
           console.log("r pressed!");
+            baseCol = currentCols[0]
+            baseRow = currentRows[0];
             if (currentRows.every((row) => {return row === currentRows[0]}) && currentCols.slice(1,5).every((col) => {return col != currentCols[0];})) {
               //special case for flat I bar
               //make all the columns the same to keep it vertical, make rows increment
@@ -184,6 +246,11 @@
                 currentRows[i] = currentRows[0];
                 currentCols[i] = currentCols[0] + i;
               }
+            }
+            else if (currentCols === [baseCol, baseCol, baseCol + 1, baseCol + 2] && currentRows === [baseRow, baseRow + 1, baseRow, baseRow]) {
+              console.log("hitting the down facing L shape transform to upside down L shape")
+              currentCols = [baseCol, baseCol + 1, baseCol + 1, baseCol + 1];
+              currentRows = [baseRow - 1, baseRow - 2, baseRow, baseRow + 1];
             }
             else if (currentCols[3] - currentCols[0] === 2 && currentCols[1] === currentCols[2] && currentRows[0] === currentRows[2]) {
               //horizontal S shape --- doing the opposite of the up facing S shape
@@ -210,7 +277,7 @@
               currentRows[0] = currentRows[0] + 1;
               currentRows[1] = currentRows[1] - 1;
             }
-            else if (currentCols[2] === currentCols[3] && currentCols[1] > currentCols[0]) {
+            else if (currentCols[2] === currentCols[3] && currentCols[1] > currentCols[0] && currentRows[1] + 1 === currentRows[3]) {
               //flat L shape to transform into regular L shape
                 console.log('hitting here 4')
               currentCols[0] = currentCols[0] + 1;
@@ -219,7 +286,7 @@
               currentRows[1] = currentRows[1] - 1;
               currentRows[2] = currentRows[2] + 1;
             }
-            else if (currentCols.slice(0,4).every( (col) => { return col != currentCols[3];}) ) {
+            else if (currentCols.slice(0,3).every( (col) => { return col < currentCols[3];}) && currentRows[0] + 2 === currentRows[3] ) {
               //regular L shape to transform into down facing flat L shape
                 console.log('hitting here 5')
               currentCols[0] = currentCols[0] - 1;
