@@ -11,13 +11,14 @@
       var score = 0;
       var oldScore = 0;
       var anchorCol = 0;
-      var delay = 400;
+      var delay = 200;
       var startGame = false;
       var pauseGame = false;
       var oldDelay = delay;
       var gameOver = false;
       var baseCol = 0;
       var baseRow = 0;
+      var highScores = [500, 1000,  5000,  10000, 25000];
       const colors = ["#F7DC6F","#2471A3", "#2ECC71", "#EB984E", "#AF7AC5", "#D5DBDB", "#784212"];
       var currentColor = "#F7DC6F";
       //in block positions, xPos key points to an array of yPos's
@@ -53,7 +54,6 @@
             }
           });
 
-          //creates new block if current block gets stacked
         if (toggle === true) {
           cols.forEach( (col, idx) => {
 
@@ -93,7 +93,7 @@
           anchorCol = Math.floor(Math.random() * 10);
           cols.push(anchorCol);
           for (let blockCount = 1; blockCount < 4; blockCount++) {
-            switch (Math.floor(Math.random() * 2)) {
+            switch (Math.floor(Math.random() * 3)) {
 
               case 0 :
                 if (cols.slice(-1)[0] < 11) {
@@ -108,6 +108,17 @@
                 cols.push(cols.slice(-1)[0]); //same column
                 rows.push(rows.slice(-1)[0] + 1); //new row
                 break;
+              case 2:
+                cols = [anchorCol, anchorCol, anchorCol + 1, anchorCol + 1];
+                rows = [0, 1 , 0 , 1];
+                blockCount = 4;
+              case 3:
+                if (anchorCol + 1 < 11) {
+                  cols = [anchorCol, anchorCol, anchorCol, anchorCol + 1];
+                  rows = [0 , 1 , 2, 1];
+                  blockCount = 4;
+                }
+
             }
           }
 
@@ -156,7 +167,17 @@
 
           if (gameOver === true) {
             ctx.clearRect(0,0, canvas.width, canvas.height);
-            document.getElementById("game-over").innerHTML = "Game Over! Press any key to play again."
+            document.getElementById("game-over").innerHTML = "Game Over! Press any key to play again.";
+            highScores.forEach( (highScore, idx) => {
+              if (score > highScore) {
+                highScores[idx] = score;
+              }
+            });
+            document.getElementById("top-score").innerHTML = highScores[4];
+            document.getElementById("second-score").innerHTML = highScores[3];
+            document.getElementById("third-score").innerHTML = highScores[2];
+            document.getElementById("fourth-score").innerHTML = highScores[1];
+            document.getElementById("fifth-score").innerHTML = highScores[0];
           }
 
           if (pauseGame === false && gameOver === false) {
@@ -220,8 +241,12 @@
             break;
           case "r" :
           console.log("r pressed!");
-            baseCol = currentCols[0]
+            console.log(currentCols);
+            baseCol = currentCols[0];
+            console.log(baseCol);
+            console.log(currentRows);
             baseRow = currentRows[0];
+            console.log(baseRow)
             if (currentRows.every((row) => {return row === currentRows[0]}) && currentCols.slice(1,5).every((col) => {return col != currentCols[0];})) {
               //special case for flat I bar
               //make all the columns the same to keep it vertical, make rows increment
@@ -229,15 +254,6 @@
                 currentCols[i] = currentCols[0];
                 currentRows[i] = currentRows[0] + i;
               }
-            }
-            else if (currentCols[0] === currentCols[1] && currentCols[2] === currentCols[3] && currentCols[0] != currentCols[2]) {
-              //up facing S shape
-                console.log('hitting here 1')
-              currentCols.shift();
-              currentCols.push(currentCols.slice(-1)[0] + 1);
-              currentRows[0] = currentRows[0] + 2;
-              currentRows[2] = currentRows[2] + 1;
-              currentRows[3] = currentRows[3] - 1;
             }
             else if ( currentRows.slice(1,5).every((row) => {return row != currentRows[0];}) &&  currentCols.every((col) => {return col === currentCols[0]})) {
               //special case for vertical I bar
@@ -247,10 +263,62 @@
                 currentCols[i] = currentCols[0] + i;
               }
             }
-            else if (currentCols === [baseCol, baseCol, baseCol + 1, baseCol + 2] && currentRows === [baseRow, baseRow + 1, baseRow, baseRow]) {
-              console.log("hitting the down facing L shape transform to upside down L shape")
+            else if (currentCols.toString() === [baseCol, baseCol, baseCol, baseCol + 1].toString() && currentRows.toString() === [baseRow , baseRow + 1 , baseRow + 2, baseRow + 1].toString() ) {
+              console.log("hitting the right pointing T shape to transform to down pointing T shape");
+              currentCols = [baseCol - 1, baseCol, baseCol, baseCol + 1];
+              currentRows = [baseRow + 1, baseRow + 1, baseRow + 2, baseRow + 1];
+            }
+            else if (currentCols.toString() === [baseCol, baseCol + 1, baseCol + 1, baseCol + 2].toString() &&  currentRows.toString() === [baseRow, baseRow, baseRow + 1, baseRow].toString()) {
+              console.log("hitting the down pointing T shape to transform to the left pointing T shape");
               currentCols = [baseCol, baseCol + 1, baseCol + 1, baseCol + 1];
-              currentRows = [baseRow - 1, baseRow - 2, baseRow, baseRow + 1];
+              currentRows = [baseRow, baseRow - 1, baseRow, baseRow + 1];
+            }
+            else if (currentCols.toString() === [baseCol, baseCol + 1,baseCol + 1,baseCol + 1].toString() && currentRows.toString() === [baseRow, baseRow - 1, baseRow, baseRow + 1].toString()) {
+              console.log("hitting the left pointing T shape to transform to the up pointing T shape");
+              currentCols = [baseCol, baseCol + 1, baseCol + 1, baseCol + 2];
+              currentRows = [baseRow, baseRow - 1, baseRow, baseRow];
+            }
+            else if (currentCols.toString() === [baseCol, baseCol + 1, baseCol + 1, baseCol + 2].toString() && currentRows.toString() === [baseRow, baseRow - 1, baseRow, baseRow].toString()) {
+              console.log("hitting the up pointing T shape to transform to the right pointing T shape");
+              currentCols = [baseCol + 1, baseCol + 1, baseCol + 1, baseCol + 2];
+              currentRows = [baseRow - 1, baseRow, baseRow + 1, baseRow];
+            }
+            else if ( currentCols.toString() === [baseCol, baseCol, baseCol + 1, baseCol + 1].toString() && currentRows.toString()=== [baseRow, baseRow + 1, baseRow, baseRow + 1].toString()) {
+              console.log("hitting the square shape!");
+            }
+            else if (currentCols.toString() === [baseCol, baseCol + 1, baseCol + 1, baseCol + 2].toString() && currentRows.toString() === [baseRow, baseRow, baseRow + 1, baseRow + 1].toString()) {
+              console.log("hitting the regular z shape to transform to up facing z shape");
+              currentCols = [baseCol, baseCol, baseCol + 1, baseCol + 1];
+              currentRows = [baseRow, baseRow + 1, baseRow - 1, baseRow];
+            }
+            else if (currentCols.toString() === [baseCol, baseCol, baseCol + 1, baseCol + 1].toString() && currentRows.toString() === [baseRow, baseRow + 1, baseRow - 1, baseRow].toString()) {
+              console.log("hitting the up facing z shape to transform to the regular z shape");
+              currentCols = [baseCol, baseCol + 1, baseCol + 1, baseCol + 2];
+              currentRows = [baseRow, baseRow, baseRow + 1, baseRow + 1];
+            }
+            else if (currentCols.toString() === [baseCol, baseCol, baseCol + 1, baseCol + 2].toString() && currentRows.toString() === [baseRow, baseRow + 1, baseRow, baseRow].toString()) {
+              console.log("hitting the down facing L shape transform to upside down L shape");
+              currentCols = [baseCol, baseCol + 1, baseCol + 1, baseCol + 1];
+              currentRows = [baseRow - 1, baseRow - 1, baseRow, baseRow + 1];
+            }
+            else if (currentCols[0] === currentCols[1] && currentCols[2] === currentCols[3] && currentCols[0] != currentCols[2]) {
+              //up facing S shape
+              console.log('hitting here 1')
+              currentCols.shift();
+              currentCols.push(currentCols.slice(-1)[0] + 1);
+              currentRows[0] = currentRows[0] + 2;
+              currentRows[2] = currentRows[2] + 1;
+              currentRows[3] = currentRows[3] - 1;
+            }
+            else if (currentCols.toString() === [baseCol, baseCol + 1, baseCol + 1, baseCol + 1].toString() && currentRows.toString() === [baseRow, baseRow, baseRow + 1, baseRow + 2].toString()) {
+              console.log("hitting the upside down facing L shape transform to flat L shape");
+              currentCols = [baseCol, baseCol + 1, baseCol + 2, baseCol + 2];
+              currentRows = [baseRow + 2, baseRow + 2, baseRow + 1, baseRow + 2];
+            }
+            else if (currentCols.toString() === [baseCol, baseCol + 1, baseCol + 2, baseCol + 2].toString() && currentRows.toString() === [baseRow, baseRow, baseRow - 1, baseRow].toString() ) {
+              console.log("hitting the flat L shape to transform into regular L shape");
+              currentCols = [baseCol + 1, baseCol + 1, baseCol + 1, baseCol + 2];
+              currentRows = [baseRow - 2, baseRow - 1, baseRow, baseRow];
             }
             else if (currentCols[3] - currentCols[0] === 2 && currentCols[1] === currentCols[2] && currentRows[0] === currentRows[2]) {
               //horizontal S shape --- doing the opposite of the up facing S shape
