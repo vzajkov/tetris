@@ -4,6 +4,7 @@
   left: 41%;
   border: 3px solid white;
   border-radius: 3px;
+  top: 10%;
 }
 
 
@@ -12,6 +13,15 @@ body {
   font-family: 'Press Start 2P', cursive;
   color: white;
   justify-content: space-between;
+}
+
+h1 {
+  font-family: 'Press Start 2P', cursive;
+  color: white;
+  font-size: 40px;
+  display: block;
+  position: absolute;
+  left: 43%;
 }
 
 #directions-wrapper {
@@ -25,7 +35,7 @@ body {
   font-size: 25px;
   display: block;
   position: absolute;
-  top: 30px;
+  top: 10%;
   left: 30px;
 }
 
@@ -40,7 +50,7 @@ body {
   text-align: center;
   font-family: 'Press Start 2P', cursive;
   position: absolute;
-  top: 30px;
+  top: 10%;
   right: 30px;
 }
 
@@ -89,7 +99,7 @@ body {
   float: left;
   padding-bottom: 10px;
   position: absolute;
-  top: 530px;
+  top: 60%;
   left: 30px;
 }
 

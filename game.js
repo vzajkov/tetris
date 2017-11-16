@@ -23,6 +23,14 @@
       var currentColor = "#F7DC6F";
       //in block positions, xPos key points to an array of yPos's
       var blockPositions = {0: [25], 1: [25],  2: [25], 3: [25], 4: [25], 5: [25], 6: [25], 7: [25], 8: [25], 9:[25], 10: [25], 11: [25]};
+      const kicksRight = (inputCols, inputRows) => {
+        inputCols.forEach((col, idx) => {
+          if (blockPositions[col].includes(inputRows[idx]) ) {
+            return true;
+          }
+        });
+        return false;
+      };
 
 
       sinkBlocks = (delay, cols,  rows, color) => {
@@ -33,9 +41,9 @@
           document.getElementById("press-start").innerHTML = "";
         }
         if (pauseGame === true) {
-          document.getElementById("game-paused").innerHTML = "Game Paused"
+          document.getElementById("game-paused").innerHTML = "Game Paused";
         } else {
-          document.getElementById("game-paused").innerHTML = ""
+          document.getElementById("game-paused").innerHTML = "";
         }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -72,7 +80,6 @@
               }
             });
           });
-          console.log(rowHolder);
           // increment the rows by one if they are on top of the deleted row
           Object.keys(blockPositions).forEach( (col, idx) => {
             rowHolder.forEach( (fullRow) => {
@@ -93,7 +100,7 @@
           anchorCol = Math.floor(Math.random() * 10);
           cols.push(anchorCol);
           for (let blockCount = 1; blockCount < 4; blockCount++) {
-            switch (Math.floor(Math.random() * 3)) {
+            switch (Math.floor(Math.random() * 4)) {
 
               case 0 :
                 if (cols.slice(-1)[0] < 11) {
@@ -112,6 +119,7 @@
                 cols = [anchorCol, anchorCol, anchorCol + 1, anchorCol + 1];
                 rows = [0, 1 , 0 , 1];
                 blockCount = 4;
+                break
               case 3:
                 if (anchorCol + 1 < 11) {
                   cols = [anchorCol, anchorCol, anchorCol, anchorCol + 1];
@@ -173,11 +181,123 @@
                 highScores[idx] = score;
               }
             });
-            document.getElementById("top-score").innerHTML = highScores[4];
-            document.getElementById("second-score").innerHTML = highScores[3];
-            document.getElementById("third-score").innerHTML = highScores[2];
-            document.getElementById("fourth-score").innerHTML = highScores[1];
-            document.getElementById("fifth-score").innerHTML = highScores[0];
+            console.log(score)
+            console.log(highScores)
+            if( score >= highScores[4]) {
+              setTimeout( () => {
+                document.getElementById("top-score").innerHTML = "     ";
+                document.getElementById("second-score").innerHTML ="    ";
+                document.getElementById("third-score").innerHTML = "    ";
+                document.getElementById("fourth-score").innerHTML = "    ";
+                document.getElementById("fifth-score").innerHTML = "    ";
+                setTimeout( () => {
+                  document.getElementById("top-score").innerHTML = highScores[4];
+                  document.getElementById("second-score").innerHTML = highScores[3];
+                  document.getElementById("third-score").innerHTML = highScores[2];
+                  document.getElementById("fourth-score").innerHTML = highScores[1];
+                  document.getElementById("fifth-score").innerHTML = highScores[0];
+                  setTimeout( () => {
+                    document.getElementById("top-score").innerHTML = "    ";
+                    document.getElementById("second-score").innerHTML ="    ";
+                    document.getElementById("third-score").innerHTML = "    ";
+                    document.getElementById("fourth-score").innerHTML = "    ";
+                    document.getElementById("fifth-score").innerHTML = "     ";
+                    setTimeout( () => {
+                      document.getElementById("top-score").innerHTML = highScores[4];
+                      document.getElementById("second-score").innerHTML = highScores[3];
+                      document.getElementById("third-score").innerHTML = highScores[2];
+                      document.getElementById("fourth-score").innerHTML = highScores[1];
+                      document.getElementById("fifth-score").innerHTML = highScores[0];
+                    }, 500);
+                  }, 500);
+                }, 500);
+              }, 500);
+
+            }
+            if( score >= highScores[3] && score < highScores[4]) {
+
+              setTimeout( () => {
+                document.getElementById("second-score").innerHTML ="    ";
+                document.getElementById("third-score").innerHTML = "    ";
+                document.getElementById("fourth-score").innerHTML = "    ";
+                document.getElementById("fifth-score").innerHTML = "    ";
+                setTimeout( () => {
+                  document.getElementById("second-score").innerHTML = highScores[3];
+                  document.getElementById("third-score").innerHTML = highScores[2];
+                  document.getElementById("fourth-score").innerHTML = highScores[1];
+                  document.getElementById("fifth-score").innerHTML = highScores[0];
+                  setTimeout( () => {
+                    document.getElementById("second-score").innerHTML ="    ";
+                    document.getElementById("third-score").innerHTML = "    ";
+                    document.getElementById("fourth-score").innerHTML = "    ";
+                    document.getElementById("fifth-score").innerHTML = "    ";
+                    setTimeout( () => {
+                      document.getElementById("second-score").innerHTML = highScores[3];
+                      document.getElementById("third-score").innerHTML = highScores[2];
+                      document.getElementById("fourth-score").innerHTML = highScores[1];
+                      document.getElementById("fifth-score").innerHTML = highScores[0];
+                    }, 500);
+                  }, 500);
+                }, 500);
+              }, 500);
+
+
+            }
+            if( score >= highScores[2] && score < highScores[3]) {
+
+              setTimeout( () => {
+                document.getElementById("third-score").innerHTML = "    ";
+                document.getElementById("fourth-score").innerHTML = "    ";
+                document.getElementById("fifth-score").innerHTML = "     ";
+                setTimeout( () => {
+                  document.getElementById("third-score").innerHTML = highScores[2];
+                  document.getElementById("fourth-score").innerHTML = highScores[1];
+                  document.getElementById("fifth-score").innerHTML = highScores[0];
+                  setTimeout( () => {
+                    document.getElementById("third-score").innerHTML = "    ";
+                    document.getElementById("fourth-score").innerHTML = "    ";
+                    document.getElementById("fifth-score").innerHTML = "    ";
+                    setTimeout( () => {
+                      document.getElementById("third-score").innerHTML = highScores[2];
+                      document.getElementById("fourth-score").innerHTML = highScores[1];
+                      document.getElementById("fifth-score").innerHTML = highScores[0];
+                    }, 500);
+                  }, 500);
+                }, 500);
+              }, 500);
+            }
+            if( score >= highScores[1] && score < highScores[2]) {
+
+              setTimeout(() => {
+                document.getElementById("fourth-score").innerHTML = "    ";
+                document.getElementById("fifth-score").innerHTML = "     ";
+                setTimeout( () => {
+                  document.getElementById("fourth-score").innerHTML = highScores[1];
+                  document.getElementById("fifth-score").innerHTML = highScores[0];
+                  setTimeout(() => {
+                    document.getElementById("fourth-score").innerHTML = "    ";
+                    document.getElementById("fifth-score").innerHTML = "     ";
+                    setTimeout( () => {
+                      document.getElementById("fourth-score").innerHTML = highScores[1];
+                      document.getElementById("fifth-score").innerHTML = highScores[0];
+                    }, 500);
+                  }, 500);
+                }, 500);
+              }, 500);
+
+            }
+            if( score >= highScores[0] && score < highScores[1]) {
+              setTimeout( () => {
+                document.getElementById("fifth-score").innerHTML = highScores[0];
+                setTimeout( () => {
+                  document.getElementById("fifth-score").innerHTML = "     ";
+                  setTimeout( () => {
+                    document.getElementById("fifth-score").innerHTML = highScores[0];
+                  }, 500);
+                }, 500);
+              }, 500);
+            }
+
           }
 
           if (pauseGame === false && gameOver === false) {
@@ -189,17 +309,13 @@
 
       };
 
-      document.addEventListener('DOMContentLoaded', () => {
-
-      });
-
-
       //key movements
       document.addEventListener('keypress', (e) => {
         if (gameOver === true) {
           gameOver = false;
           blockPositions = {0: [25], 1: [25],  2: [25], 3: [25], 4: [25], 5: [25], 6: [25], 7: [25], 8: [25], 9:[25], 10: [25], 11: [25]};
           score = 0;
+          oldScore = 0;
           delay = 400;
           cols = [3,4,5,6];
           rows = [0, 0, 0, 0];
@@ -241,12 +357,10 @@
             break;
           case "r" :
           console.log("r pressed!");
-            console.log(currentCols);
             baseCol = currentCols[0];
-            console.log(baseCol);
-            console.log(currentRows);
             baseRow = currentRows[0];
-            console.log(baseRow)
+
+
             if (currentRows.every((row) => {return row === currentRows[0]}) && currentCols.slice(1,5).every((col) => {return col != currentCols[0];})) {
               //special case for flat I bar
               //make all the columns the same to keep it vertical, make rows increment
@@ -262,6 +376,7 @@
                 currentRows[i] = currentRows[0];
                 currentCols[i] = currentCols[0] + i;
               }
+              console.log(currentCols)
             }
             else if (currentCols.toString() === [baseCol, baseCol, baseCol, baseCol + 1].toString() && currentRows.toString() === [baseRow , baseRow + 1 , baseRow + 2, baseRow + 1].toString() ) {
               console.log("hitting the right pointing T shape to transform to down pointing T shape");
@@ -390,6 +505,24 @@
               currentRows[0] = currentRows[0] + 1;
               currentRows[2] = currentRows[2] - 1;
               currentRows[3] = currentRows[3] + 2;
+            }
+            //wallkicks
+            while (currentCols.some((el) => {return el + xShift > 11;})) {
+              currentCols = currentCols.map((col) => {return col - 1;});
+            }
+            //wallkicks
+            while (currentCols.some((el) => {return el + xShift < 0;})) {
+              currentCols = currentCols.map((col) => {return col + 1;});
+            }
+            //bottom row kicks
+            while (!currentRows.every((el) => {return el < 24;})) {
+              currentRows = currentRows.map((row) => {return row - 1;});
+            }
+
+            //piece kicks
+            console.log(kicksRight(currentCols.map((col) => {return col + xShift;}), currentRows))
+            while (kicksRight(currentCols, currentRows)) {
+              currentCols = currentCols.map((col) => {return col - 1;});
             }
             break;
           default :
