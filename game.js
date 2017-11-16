@@ -330,13 +330,13 @@
         switch(e.key) {
           case "p" :
             if (pauseGame === false) {
-              console.log("hitting!!!")
+              console.log("hitting!!!");
               pauseGame = true;
             } else if (pauseGame === true) {
               pauseGame = false;
-              return sinkBlocks(delay, currentCols, currentRows, currentColor)
+              return sinkBlocks(delay, currentCols, currentRows, currentColor);
             }
-            break
+            break;
           case "d" :
             if (currentCols.every((currentCol) => {
               return currentCol + xShift < 11;
@@ -345,7 +345,7 @@
               console.log("d pressed!");
               xShift = xShift + 1;
             }
-            break
+            break;
           case "a" :
             if (currentCols.every((currentCol) => {
               return currentCol + xShift > 0;
@@ -376,7 +376,6 @@
                 currentRows[i] = currentRows[0];
                 currentCols[i] = currentCols[0] + i;
               }
-              console.log(currentCols)
             }
             else if (currentCols.toString() === [baseCol, baseCol, baseCol, baseCol + 1].toString() && currentRows.toString() === [baseRow , baseRow + 1 , baseRow + 2, baseRow + 1].toString() ) {
               console.log("hitting the right pointing T shape to transform to down pointing T shape");
