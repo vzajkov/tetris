@@ -37,6 +37,7 @@
 
       var highScores = [500, 1000,  5000,  10000, 25000];
 
+      var pieceRows = [];
       const colors = ["#F7DC6F","#2471A3", "#2ECC71", "#EB984E", "#AF7AC5", "#D5DBDB", "#784212"];
       var currentColor = "#F7DC6F";
 
@@ -196,11 +197,15 @@
             ctx.clearRect(0,0, canvas.width, canvas.height);
             document.getElementById("game-over").innerHTML = "Game Over! Press any key to play again.";
             highScores.forEach( (highScore, idx) => {
-              if (score > highScore) {
-                highScores[idx] = score;
+              if (score > highScore - 10) {
+                highScores[idx] = score - 10;
               }
             });
-            scoreFlasher(score, highScores);
+            document.getElementById("top-score").innerHTML = highScores[4];
+            document.getElementById("second-score").innerHTML = highScores[3];
+            document.getElementById("third-score").innerHTML = highScores[2];
+            document.getElementById("fourth-score").innerHTML = highScores[1];
+            document.getElementById("fifth-score").innerHTML = highScores[0];
           }
 
           if (pauseGame === false && gameOver === false) {
@@ -212,7 +217,23 @@
 
       };
 
-      //key movements
+      const intersectionCheck = (bigArr, smallArr) => {
+        let seen = {};
+        let intersect = false;
+
+        bigArr.forEach( (elem) => {
+          seen[elem] = true;
+        });
+
+        smallArr.forEach( (elem) => {
+          if (seen[elem]) {
+            intersect = true;
+          }
+        });
+
+        return intersect;
+      };
+
       document.addEventListener('keypress', (e) => {
         if (gameOver === true) {
           gameOver = false;
@@ -233,7 +254,6 @@
         switch(e.key) {
           case "p" :
             if (pauseGame === false) {
-              console.log("hitting!!!");
               pauseGame = true;
             } else if (pauseGame === true) {
               pauseGame = false;
@@ -241,26 +261,31 @@
             }
             break;
           case "d" :
+            pieceRows = [];
+            currentCols.forEach((col) => {
+              pieceRows = pieceRows.concat(blockPositions[col + xShift + 1]);
+            });
             if (currentCols.every((currentCol) => {
-              return currentCol + xShift < 11;
+              return currentCol + xShift < 11 && !intersectionCheck(pieceRows, currentRows) && !intersectionCheck(pieceRows, currentRows.map(row => row - 1));
               // && blockPositions[currentCol + xShift + 1].every( (row) => {return row != currentRows[idx] })
             })) {
-              console.log("d pressed!");
               xShift = xShift + 1;
             }
 
             break;
           case "a" :
+            pieceRows = [];
+            currentCols.forEach((col) => {
+              pieceRows = pieceRows.concat(blockPositions[col + xShift - 1]);
+            });
             if (currentCols.every((currentCol) => {
-              return currentCol + xShift > 0;
+              return currentCol + xShift > 0 && !intersectionCheck(pieceRows, currentRows) && !intersectionCheck(pieceRows, currentRows.map(row => row - 1));
               // && blockPositions[currentCol + xShift - 1].every( (row) => {return row != currentRows[idx] })
             })) {
-              console.log("a pressed!");
               xShift = xShift - 1;
             }
             break;
           case "r" :
-          console.log("r pressed!");
             baseCol = currentCols[0];
             baseRow = currentRows[0];
 
@@ -414,9 +439,9 @@
             }
 
             //piece kicks
-            while (kicksRight(currentCols, currentRows)) {
-              currentCols = currentCols.map((col) => {return col - 1;});
-            }
+            // while (kicksRight(currentCols, currentRows)) {
+            //   currentCols = currentCols.map((col) => {return col - 1;});
+            // }
             break;
           default :
             console.log('wrong key');
